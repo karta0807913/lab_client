@@ -1,0 +1,35 @@
+.alert_div {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column-reverse;
+    overflow-x: hidden;
+    height: 50vh;
+    pointer-events: none;
+}
+
+.close {
+    pointer-events: all;
+}
+
+.alert {
+    width: 40%;
+    margin: auto;
+    z-index: 1080;
+    animation-name: fadeInDown;
+    animation-duration: 3s;
+    animation-fill-mode: both;
+}
+
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-30vh);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

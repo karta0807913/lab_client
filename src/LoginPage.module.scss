@@ -1,0 +1,22 @@
+.container {
+  width: 100%;
+}
+
+.login_page {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+
+  margin: auto;
+}
+
+.btn {
+  margin-top: 20px;
+}
+
+.btn_content {
+  display: flex;
+  justify-content: center;
+}

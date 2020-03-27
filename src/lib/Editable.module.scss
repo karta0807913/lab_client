@@ -1,0 +1,24 @@
+.editable_text {
+    margin: auto;
+    word-break: break-word;
+}
+
+.disabled_button {
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+    pointer-events: none;
+}
+
+.form_input > input:invalid {
+    + div {
+        .submit_button {
+            @extend .disabled_button;
+        }
+        + div {
+            .submit_button {
+                @extend .disabled_button;
+            }
+        }
+    }
+}

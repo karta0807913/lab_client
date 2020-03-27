@@ -1,0 +1,12 @@
+.input:invalid {
+    background-color: #ff66667d;
+}
+
+.input:valid + div {
+    display: none;
+}
+
+.input:invalid + div > span {
+    background-color: #ff66667d;
+    display: block;
+}
