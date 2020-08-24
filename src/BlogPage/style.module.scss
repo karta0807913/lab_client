@@ -1,0 +1,100 @@
+.section {
+  padding-top: 150px;
+  padding-bottom: 110px;
+  display: block;
+  position: relative;
+  z-index: 120;
+  * {
+    font-family: 'Ek Mukta', sans-serif;
+    font-size: 16px;
+    color: #666;
+    font-weight: 400;
+    line-height: 1.6em;
+  }
+  h5 {
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #666;
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  h2 {
+    font-size: 24px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: #111;
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.1;
+    font-weight: 600;
+  }
+}
+
+.bg-gray {
+  background: #f9f9f9;
+}
+
+.fa {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+}
+
+.fa-laptop:before {
+  @extend .fa;
+  content: "\f109";
+  font-size: 2em;
+}
+
+.fa-terminal:before {
+  @extend .fa;
+  font-size: 2em;
+  content: "\f120";
+}
+
+.fa-code:before {
+  @extend .fa;
+  font-size: 2em;
+  content: "\f121";
+}
+
+.service-box {
+  background: #fff;
+  border-bottom: 2px solid #f7f7f7;
+  padding: 40px 20px;
+}
+
+.service-box:hover {
+  border-bottom: 2px solid #3dc9b3;
+  margin-top: -20px;
+  transition: all .2s ease-in-out;
+}
+
+.divider-header {
+  margin-bottom: 30px;
+  background: #666;
+  display: block;
+  width: 40px;
+  height: 2px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+}
+
+.service-icon {
+  margin-bottom: 20px;
+}
+
+.marginbot-50 {
+  margin-bottom: 50px;
+}
+
+.service {
+  @extend .row;
+  margin-right: -45px !important;
+  margin-left: -45px !important;
+}
+
+@import '~bootstrap/scss/bootstrap.scss'

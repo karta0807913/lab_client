@@ -1,8 +1,8 @@
 import React from 'react';
-import style from "./FileBrowser.module.scss";
-import { alert } from "./lib/Alert.js";
+import style from "./style.module.scss";
+import { alert } from "../lib/Alert";
 
-import * as request from "./requests";
+import * as request from "../requests";
 
 export default class FileBrowser extends React.Component {
 
@@ -20,11 +20,11 @@ export default class FileBrowser extends React.Component {
       return window._history.goBack();
     }
     let file;
-    if(!window._file || window._file.id !== id) {
+    if (!window._file || window._file.id !== id) {
       try {
         file = await request.get_file(id);
         file = await file.json();
-      } catch(error) {
+      } catch (error) {
         alert("取得檔案時出現問題");
         return window._history.goBack();
       }
@@ -35,17 +35,17 @@ export default class FileBrowser extends React.Component {
   }
 
   render() {
-    if(this.state.file === undefined) {
+    if (this.state.file === undefined) {
       return <div>
-               載入中...
+        載入中...
              </div>;
     } else {
-      return <div className={ style.container }>
-               <iframe
-                 src={`https://drive.google.com/file/d/${this.state.file.id}/preview`}
-               >
-               </iframe>
-             </div>;
+      return <div className={style.container}>
+        <iframe
+          src={`https://drive.google.com/file/d/${this.state.file.id}/preview`}
+        >
+        </iframe>
+      </div>;
     }
   }
 }
