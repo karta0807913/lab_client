@@ -38,9 +38,6 @@ export default class StatusBar extends React.Component {
     this._ui_keymap_vim = React.createRef();
   }
 
-  componentDidMount() {
-  }
-
   componentDidUpdate() {
     if (!this.props.editor) return;
     this.statusCursor = $(this._statusCursor.current);
@@ -55,6 +52,10 @@ export default class StatusBar extends React.Component {
     this.statusLinter = $(this._statusLinter.current);
     this.statusPreferences = $(this._statusPreferences.current);
     this.updateStatusBar();
+    this.props.editor.on("cursorActivity",
+      this.updateStatusBar.bind(this));
+    this.props.editor.on('beforeSelectionChange',
+      this.updateStatusBar.bind(this));
   }
 
   updateStatusBar() {
@@ -476,7 +477,7 @@ export default class StatusBar extends React.Component {
   render() {
     if (!this.props.editor) return null;
     return (
-      <div className="status-bar">
+      <div className={`status-bar ${this.props.className || ""}`}>
         <div className="status-info">
           <div className="status-cursor">
             <span
@@ -612,7 +613,6 @@ export default class StatusBar extends React.Component {
           </div>
         </div>
       </div>
-
     );
   }
 }

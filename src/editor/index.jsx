@@ -17,6 +17,8 @@ import CodeMirrorSpellChecker, { supportLanguages, supportLanguageCodes } from '
 import { initTableEditor } from './table-editor';
 import { availableThemes } from './constants';
 
+import style from "./style.module.scss";
+
 /* config section */
 const isMac = CodeMirror.keyMap.default === CodeMirror.keyMap.macDefault;
 const defaultEditorMode = 'gfm';
@@ -30,6 +32,8 @@ export default class Editor extends React.Component {
     };
     this._textaria = React.createRef();
     this._stausbar = React.createRef();
+    this._container = React.createRef();
+    this._resize_lock = null;
     this.editor = null;
     this.defaultExtraKeys = {
       F10: function(cm) {
@@ -210,18 +214,45 @@ export default class Editor extends React.Component {
     return this.editor;
   }
 
+  async onresize() {
+    while (this._resize_lock) {
+      await this._resize_lock;
+    }
+    function sleep(time) {
+      return new Promise(res => setTimeout(res, time));
+    }
+    this._resize_lock = new Promise(async (res) => {
+      await sleep(400);
+      let container = $(this._container.current);
+      let height = container.height();
+      container.find(".CodeMirror-scroll").height(height);
+      res();
+      this._resize_lock = null;
+    });
+  }
+
   componentDidMount() {
     this.init(this._textaria.current);
+
+    $(window).resize(() => this.onresize());
+    this.editor.setSize(null, "150px");
     this.setState({ editor: this.editor });
+    this.onresize();
   }
 
   render() {
     return (
-      <div>
-        <ToolBar editor={this.state.editor} />
-        <input type="textarea" ref={this._textaria} />
+      <div className={style.container}>
+        <ToolBar editor={this.state.editor} className={style.toolbar} />
+        <div
+          className={style.edit_container}
+          ref={this._container}
+        >
+          <input type="textarea" ref={this._textaria} />
+        </div>
         <StatusBar
           editor={this.state.editor}
+          className={style.statusbar}
           defaultEditorMode={defaultEditorMode}
           ref={this._stausbar}
         />

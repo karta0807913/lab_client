@@ -172,7 +172,7 @@ export default class ToolBar extends React.Component {
       return null;
     }
     return (
-      <div className="toolbar" >
+      <div className={`toolbar ${this.props.className || ""}`} >
         <div className="btn-toolbar" role="toolbar" aria-label="Editor toolbar">
           <div className="btn-group" role="group">
             <a ref={this._makeBold} onClick={() => this.makeBold()} className="btn btn-sm btn-dark text-uppercase" data-toggle="" role="button" aria-haspopup="true" aria-expanded="false" title="Bold">
