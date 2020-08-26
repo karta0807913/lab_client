@@ -18,6 +18,15 @@ export default class LoginPage extends React.Component {
     this._sign_up_form = React.createRef();
   }
 
+  async componentDidMount() {
+    try {
+      let me = await requests.me();
+      alert("已經登入過，將跳轉至首頁");
+      return window._history.push(process.env.PUBLIC_URL + "/index");
+    } catch (error) {
+    }
+  }
+
   async login() {
     if (this._form.current.checkValidity()) {
       try {

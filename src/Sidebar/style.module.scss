@@ -10,7 +10,19 @@ $sidebar-width: 250px;
 .header {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+}
+
+.header_title {
+  display: flex;
+  flex-direction: row;
   align-items: center;
+}
+
+.login_button {
+  align-items: center;
+  display: flex;
+  margin: 10px 10px;
 }
 
 .right_context {

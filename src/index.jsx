@@ -19,15 +19,15 @@ window._history = history;
 
 ReactDOM.render(<Router history={history}>
   <Switch>
-    <Route exact path="/login">
+    <Route exact path={`${process.env.PUBLIC_URL}/login`}>
       <LoginPage />
     </Route>
-    <Route path="/file">
+    <Route path={`${process.env.PUBLIC_URL}/file`}>
       <Sidebar>
         <FileList />
       </Sidebar>
     </Route>
-    <Route path="/index">
+    <Route path={`${process.env.PUBLIC_URL}/index`}>
       <Sidebar>
         <BlogPage />
       </Sidebar>

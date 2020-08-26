@@ -109,3 +109,8 @@ export function user_info(id) {
         user_id: id
     });
 }
+
+export function logout() {
+    return get("/member/logout", {
+    });
+}
