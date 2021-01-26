@@ -16,69 +16,114 @@ import "codemirror/lib/codemirror.css";
 
 export default class MarkdownEditor extends React.Component {
 
+  _editor_view = React.createRef();
+
+  options = {
+    width: "100%",
+    height: "100%",
+    codeFold: true,
+    saveHTMLToTextarea: true,    // 保存 HTML 到 Textarea
+    searchReplace: true,
+    tocm: true,         // Using [TOCM]
+    htmlDecode: "style,iframe",  // you can filter tags decode
+    //watch : false,                // 关闭实时预览
+    //toolbar  : false,             //关闭工具栏
+    //previewCodeHighlight : false, // 关闭预览 HTML 的代码块高亮，默认开启
+    emoji: true,
+    taskList: true,
+    tex: true,                   // 开启科学公式TeX语言支持，默认关闭
+    // flowChart: true,             // 开启流程图支持，默认关闭
+    // sequenceDiagram: true,       // 开启时序/序列图支持，默认关闭,
+    imageUpload: true,
+    imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+  }
+
   componentDidMount() {
+    // init environment
     window.CodeMirror = CodeMirror;
     window.jQuery = jQuery;
     window.Zepto = {};
     window.marked = marked;
 
-    this.editor = Editor();
-    ImageDialog(this.editor);
-    CodeBlockDialog(this.editor);
-    if (this.props.readOnly) {
-
-      console.log(this.props.markdown);
-      this.editor = this.editor.markdownToHTML("editor", {
-        markdown: this.props.markdown,
-        htmlDecode: "style,script,iframe",  // you can filter tags decode
-        //toc             : false,
-        tocm: true,    // Using [TOCM]
-        emoji: true,
-        taskList: true,
-        tex: true,  // 默认不解析
-      });
-    } else {
-      this.editor = this.editor("editor", {
-        width: "100%",
-        height: "100%",
-        codeFold: true,
-        saveHTMLToTextarea: true,    // 保存 HTML 到 Textarea
-        searchReplace: true,
-        tocm: true,         // Using [TOCM]
-        markdown: this.props.markdown,
-        //watch : false,                // 关闭实时预览
-        //toolbar  : false,             //关闭工具栏
-        //previewCodeHighlight : false, // 关闭预览 HTML 的代码块高亮，默认开启
-        emoji: true,
-        taskList: true,
-        tex: true,                   // 开启科学公式TeX语言支持，默认关闭
-        // flowChart: true,             // 开启流程图支持，默认关闭
-        // sequenceDiagram: true,       // 开启时序/序列图支持，默认关闭,
-        imageUpload: true,
-        imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-      });
-
-      initTableEditor(this.editor.cm);
+    // init class
+    this._markdown = this.props.markdown;
+    this.Editor = Editor();
+    ImageDialog(this.Editor);
+    CodeBlockDialog(this.Editor);
+    this.toggleEditor(this.props.readOnly);
+    if (!this.props.readOnly) {
       setTimeout(() => {
         this.editor.resize();
       }, 100);
     }
   }
 
+  toggleEditor(readOnly = true) {
+    this._editor_view.current.innerHTML = `
+        <textarea style="display: none">
+        </textarea>`;
+    this._editor_view.current.className = this.props.className;
+
+    if (readOnly) {
+      if (this.editor) {
+        this._markdown = this.editor.getMarkdown();
+      }
+      this.editor = this.Editor.markdownToHTML("editor", {
+        ...this.options,
+        markdown: this._markdown,
+      });
+    } else {
+      this.editor = this.Editor("editor", {
+        ...this.options,
+        markdown: this._markdown,
+      });
+
+      initTableEditor(this.editor.cm);
+
+      // refresh previewer
+      this.editor.unwatch();
+      this.editor.watch();
+    }
+  }
+
+  reset() {
+    this._markdown = this.props.markdown;
+  }
+
   getMarkdown() {
-    return this.editor.getMarkdown();
+    if (this.props.readOnly) {
+      return this._markdown;
+    } else {
+      return this.editor.getMarkdown();
+    }
   }
 
   getHTML() {
-    return this.editor.getHTML();
+    if (this.props.readOnly) {
+      return this.editor.HTML();
+    } else {
+      return this.editor.getHTML();
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState && nextState.markdown !== this.props.markdown) {
+      this._markdown = nextState.markdown;
+    }
+    if (nextProps && this.props.readOnly !== nextProps.readOnly) {
+      this.toggleEditor(nextProps.readOnly);
+    }
+    // force react don't update the view
+    return false;
   }
 
   render() {
+    // please check toggleEditor for more information
     return (
-      <div id="editor">
-        <textarea style={{ display: "none" }}>
-        </textarea>
-      </div>
+      <html>
+        <div id="editor" ref={this._editor_view}>
+        </div>
+      </html>
     );
   }
 }

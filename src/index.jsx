@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import BlogPage from "./BlogPage";
 import MarkdownEditor from "./MarkdownEditor";
+import MdPage from "./MdPage";
 
 import { Button, Layout, Menu } from "antd";
 
@@ -24,7 +24,7 @@ class Index extends React.Component {
   state = {
     collapsed: false,
     user_info: null,
-    content: <MarkdownEditor readOnly markdown="# 1" />
+    content: <MdPage readOnly markdown="# 1" title="Title" />
   };
 
   _login_modal = React.createRef();
