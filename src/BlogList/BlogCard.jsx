@@ -6,6 +6,8 @@ import {
   DeleteTwoTone
 } from '@ant-design/icons';
 
+import { UserInfoContext } from "../global";
+
 import style from "./style.module.scss";
 
 export default class BlogCard extends React.Component {
@@ -59,16 +61,24 @@ export default class BlogCard extends React.Component {
         style={{ display: this.state.display }}
         cover={this._show_tag()}
         actions={[
-          <DeleteTwoTone twoToneColor="#ff0000"
-            onClick={() => {
-              this.on_icon = true;
-              if (
-                this.props.onDelete &&
-                window.confirm(`確定刪除 ${this.state.current_info.title}?`)
-              ) {
-                this.props.onDelete(this.state.current_info.blog_id);
+          <UserInfoContext.Consumer>
+            {(user_info) => {
+              if (user_info && user_info.is_admin) {
+                return (
+                  <DeleteTwoTone twoToneColor="#ff0000"
+                    onClick={() => {
+                      this.on_icon = true;
+                      if (
+                        this.props.onDelete &&
+                        window.confirm(`確定刪除 ${this.state.current_info.title}?`)
+                      ) {
+                        this.props.onDelete(this.state.current_info.blog_id);
+                      }
+                    }} />
+                );
               }
-            }} />
+            }}
+          </UserInfoContext.Consumer>
         ]}
         hoverable={true}
         onClick={() => {

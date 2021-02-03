@@ -28,7 +28,7 @@ export default class BlogList extends React.Component {
 
   offset = 0;
   limit = 20;
-  reload = true;
+  reload = false;
 
   next = () => {
     if (!this.state.is_end) {

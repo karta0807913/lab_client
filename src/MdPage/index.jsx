@@ -4,6 +4,8 @@ import { Alert, Button, Modal, Input, Tag } from "antd";
 import MarkdownEditor from "../MarkdownEditor";
 import TagSelect from "../TagSelect";
 
+import { UserInfoContext } from "../global";
+
 import * as requests from "../requests";
 import "./style.scss";
 
@@ -24,7 +26,8 @@ export default class MdPage extends React.Component {
     error: null,
     id: this.props.id,
     modal_visible: false,
-    tag_list: []
+    tag_list: [],
+    owner: {}
   };
 
   editMode = () => {
@@ -103,7 +106,7 @@ export default class MdPage extends React.Component {
 
   set_context(title, markdown, readOnly = this.props.useDefault) {
     this.setState({
-      title, markdown, readOnly
+      title, markdown, readOnly, owner: {},
     });
   }
 
@@ -111,7 +114,7 @@ export default class MdPage extends React.Component {
     if (!this.state.id || this.props.useDefault) {
       this.set_context(
         this.props.title || "新檔案1.md",
-        this.props.markdown || ""
+        this.props.markdown || "",
       );
       return;
     }
@@ -122,6 +125,7 @@ export default class MdPage extends React.Component {
         title: result.title,
         markdown: result.context,
         tag_list: result.tag_list.map(element => element.tag_info),
+        owner: result.owner,
       });
     } catch (error) {
       if (error.message === "record not found") {
@@ -160,32 +164,35 @@ export default class MdPage extends React.Component {
     }
   }
 
-  _edit_button() {
-    if (this.state.readOnly) {
-      if (this.state.error !== MdPage.FileNotFoundError &&
-        this.state.error !== MdPage.UnknowError) {
+  _edit_button = (user_info) => {
+    if (user_info &&
+      (user_info.is_admin || user_info.id == this.state.owner.user_id)) {
+      if (this.state.readOnly) {
+        if (this.state.error !== MdPage.FileNotFoundError &&
+          this.state.error !== MdPage.UnknowError) {
+          return (
+            <>
+              <Button onClick={this.editMode}>
+                編輯
+          </Button>
+            </>
+          );
+        }
+      } else {
         return (
           <>
-            <Button onClick={this.editMode}>
-              編輯
-          </Button>
+            <Button
+              onClick={this.cancel}
+              type="primary"
+              danger
+            >取消</Button>
+            <Button
+              type="primary"
+              onClick={this.submit}
+            >儲存</Button>
           </>
         );
       }
-    } else {
-      return (
-        <>
-          <Button
-            onClick={this.cancel}
-            type="primary"
-            danger
-          >取消</Button>
-          <Button
-            type="primary"
-            onClick={this.submit}
-          >儲存</Button>
-        </>
-      );
     }
   }
 
@@ -233,7 +240,9 @@ export default class MdPage extends React.Component {
           </Button>
           {this._show_tag()}
           <div>
-            {this._edit_button()}
+            <UserInfoContext.Consumer>
+              {this._edit_button}
+            </UserInfoContext.Consumer>
           </div>
         </div>
         <MarkdownEditor

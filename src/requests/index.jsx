@@ -65,8 +65,18 @@ export function login(account, password) {
   });
 }
 
-export function user_info() {
-  return get("/member/me");
+export function logout() {
+  return get("/member/logout");
+}
+
+export function user_info(id) {
+  if (id) {
+    return get("/api/user", {
+      user_id: id
+    });
+  } else {
+    return get("/member/me");
+  }
 }
 
 export function file_list() {

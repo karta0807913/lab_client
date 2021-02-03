@@ -5,6 +5,7 @@ import BlogList from "./BlogList";
 import TagPage from "./TagPage";
 
 import { Button, Layout, Menu, Dropdown } from "antd";
+import { UserInfoContext } from "./global";
 
 import {
   MenuUnfoldOutlined,
@@ -79,6 +80,7 @@ class Index extends React.Component {
             </div>
           </Dropdown>
           <Button style={{ margin: "0 10px 0 0" }} onClick={() => {
+            requests.logout();
             this.setState({ user_info: null });
           }}>登出</Button>
         </>
@@ -107,6 +109,24 @@ class Index extends React.Component {
     }
   }
 
+  _admin_menu() {
+    if (this.state.user_info && this.state.user_info.is_admin) {
+      return (
+        <Menu.SubMenu title="管理員選項" icon={<MoreOutlined />}>
+          <Menu.Item key="TagPage" icon={<TagOutlined />}>
+            標籤管理
+              </Menu.Item>
+          <Menu.Item icon={<FolderOpenOutlined />}>
+            文件管理
+              </Menu.Item>
+          <Menu.Item icon={<UserOutlined />}>
+            使用者管理
+              </Menu.Item>
+        </Menu.SubMenu>
+      );
+    }
+  }
+
   render() {
     return (
       <Layout>
@@ -124,17 +144,7 @@ class Index extends React.Component {
             <Menu.Item key="2" icon={<UnorderedListOutlined />}>
               文章列表
             </Menu.Item>
-            <Menu.SubMenu title="管理員選項" icon={<MoreOutlined />}>
-              <Menu.Item key="TagPage" icon={<TagOutlined />}>
-                標籤管理
-              </Menu.Item>
-              <Menu.Item icon={<FolderOpenOutlined />}>
-                文件管理
-              </Menu.Item>
-              <Menu.Item icon={<UserOutlined />}>
-                使用者管理
-              </Menu.Item>
-            </Menu.SubMenu>
+            {this._admin_menu()}
           </Menu>
         </Layout.Sider>
         <Layout className="site-layout">
@@ -158,9 +168,11 @@ class Index extends React.Component {
               minHeight: 280,
             }}
           >
-            <div className="site-content">
-              {this.state.content}
-            </div>
+            <UserInfoContext.Provider value={this.state.user_info}>
+              <div className="site-content">
+                {this.state.content}
+              </div>
+            </UserInfoContext.Provider>
           </Layout.Content>
         </Layout>
       </Layout>
