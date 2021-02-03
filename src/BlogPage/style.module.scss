@@ -90,11 +90,3 @@
 .marginbot-50 {
   margin-bottom: 50px;
 }
-
-.service {
-  @extend .row;
-  margin-right: -45px !important;
-  margin-left: -45px !important;
-}
-
-@import '~bootstrap/scss/bootstrap.scss'

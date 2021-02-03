@@ -1,0 +1,9 @@
+.main {
+  overflow: auto;
+  flex: 1;
+  position: relative;
+  > div {
+    margin-bottom: 0px !important;
+    overflow: hidden;
+  }
+}

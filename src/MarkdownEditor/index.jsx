@@ -4,6 +4,8 @@ import jQuery from "jquery";
 import CodeMirror from "codemirror";
 import "editor.md/lib/prettify.min.js";
 
+import style from "./style.module.scss";
+
 import Editor from "editor.md/editormd.js";
 import ImageDialog from "editor.md/plugins/image-dialog/image-dialog";
 import CodeBlockDialog from "editor.md/plugins/code-block-dialog/code-block-dialog";
@@ -50,7 +52,7 @@ export default class MarkdownEditor extends React.Component {
     this.Editor = Editor();
     ImageDialog(this.Editor);
     CodeBlockDialog(this.Editor);
-    this.toggleEditor(this.props.readOnly);
+    this.toggleEditor(!!this.props.readOnly);
     if (!this.props.readOnly) {
       setTimeout(() => {
         this.editor.resize();
@@ -63,15 +65,17 @@ export default class MarkdownEditor extends React.Component {
         <textarea style="display: none">
         </textarea>`;
     this._editor_view.current.className = this.props.className;
+    this._editor_view.current.style = "";
 
     if (readOnly) {
       if (this.editor) {
         this._markdown = this.editor.getMarkdown();
       }
-      this.editor = this.Editor.markdownToHTML("editor", {
+      this.Editor.markdownToHTML("editor", {
         ...this.options,
         markdown: this._markdown,
       });
+      this.editor = null;
     } else {
       this.editor = this.Editor("editor", {
         ...this.options,
@@ -80,6 +84,10 @@ export default class MarkdownEditor extends React.Component {
 
       initTableEditor(this.editor.cm);
 
+      setTimeout(() => {
+        this.editor.resize();
+      }, 100);
+
       // refresh previewer
       this.editor.unwatch();
       this.editor.watch();
@@ -87,7 +95,7 @@ export default class MarkdownEditor extends React.Component {
   }
 
   reset() {
-    this._markdown = this.props.markdown;
+    this.editor.cm.setValue(this._markdown);
   }
 
   getMarkdown() {
@@ -106,12 +114,34 @@ export default class MarkdownEditor extends React.Component {
     }
   }
 
+  lock() {
+    this.editor.hideToolbar();
+    this.editor.cm.setOption("readOnly", true);
+  }
+
+  resume() {
+    this.editor.showToolbar();
+    this.editor.cm.setOption("readOnly", false);
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextState && nextState.markdown !== this.props.markdown) {
-      this._markdown = nextState.markdown;
-    }
+    let update_flag = false;
+    let readOnly = this.props.readOnly;
     if (nextProps && this.props.readOnly !== nextProps.readOnly) {
-      this.toggleEditor(nextProps.readOnly);
+      readOnly = nextProps.readOnly;
+      update_flag = true;
+    }
+    if (nextProps && nextProps.markdown !== this.props.markdown) {
+      console.log("markdown changed...");
+      if (this.props.readOnly) {
+        this._markdown = nextProps.markdown;
+      } else {
+        this.editor.cm.setValue(nextProps.markdown);
+      }
+      update_flag = true;
+    }
+    if (update_flag) {
+      this.toggleEditor(!!readOnly);
     }
     // force react don't update the view
     return false;
@@ -120,10 +150,10 @@ export default class MarkdownEditor extends React.Component {
   render() {
     // please check toggleEditor for more information
     return (
-      <html>
-        <div id="editor" ref={this._editor_view}>
+      <main className={style.main}>
+        <div className={style.editor} id="editor" ref={this._editor_view}>
         </div>
-      </html>
+      </main>
     );
   }
 }

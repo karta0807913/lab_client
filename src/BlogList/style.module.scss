@@ -1,0 +1,46 @@
+.context {
+  display: flex;
+  flex-wrap: wrap;
+  > .card {
+    margin-right: 10px;
+    width: 300px;
+    margin-top: 16px;
+  }
+
+  > .new_card {
+    @extend .card;
+    width: 120px;
+    color: #1890ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > div {
+      text-align: center;
+      .text {
+        margin-top: 10px;
+      }
+    }
+  }
+}
+
+.editor {
+  height: 100%;
+  width: 100%;
+  > button {
+    position: absolute;
+    top: 0;
+    z-index: 65535;
+  }
+}
+
+.page_control {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.card_cover {
+  padding: 12px 24px 0 24px;
+}

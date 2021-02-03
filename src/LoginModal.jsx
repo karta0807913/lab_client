@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Modal, Button, Input, Form } from 'antd';
+import { Alert, Modal, Button, Input, Form } from 'antd';
 
 import * as requests from "./requests";
 
@@ -43,6 +43,29 @@ export default class LoginModal extends React.Component {
     }
   }
 
+  _errors() {
+    switch (this.state.error) {
+      case LoginModal.PASSWORD_ERROR:
+        return (
+          <Alert
+            message="帳號或密碼錯誤"
+            description="請檢查你的帳號密碼"
+            type="error"
+            closable
+          />
+        );
+      case LoginModal.UNKNOW_ERROR:
+        return (
+          <Alert
+            message="未知的錯誤"
+            description="請聯絡系統管理員"
+            type="error"
+            closable
+          />
+        );
+    }
+  }
+
   render() {
     return (
       <Modal
@@ -62,6 +85,7 @@ export default class LoginModal extends React.Component {
           </>
         }
       >
+        {this._errors()}
         <Form
           ref={this._info_form}
           onFinish={this.login}

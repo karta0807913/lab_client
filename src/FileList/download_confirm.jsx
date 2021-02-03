@@ -20,8 +20,9 @@ export default class DownloadConfirm extends React.Component {
 
   async show(file_info) {
     let user_data = await userset.getUser(file_info.user_id);
-    await this.setState({ user_data, file_info });
-    return this._modal.current.show();
+    this.setState({ user_data, file_info }, () => {
+      return this._modal.current.show();
+    });
   }
 
   hide() {

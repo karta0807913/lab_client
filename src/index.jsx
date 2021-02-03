@@ -1,16 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import MarkdownEditor from "./MarkdownEditor";
-import MdPage from "./MdPage";
+import HomePage from "./HomePage";
+import BlogList from "./BlogList";
+import TagPage from "./TagPage";
 
-import { Button, Layout, Menu } from "antd";
+import { Button, Layout, Menu, Dropdown } from "antd";
 
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
+  MoreOutlined,
+  HomeOutlined,
+  FolderOpenOutlined,
+  TagOutlined,
+  UnorderedListOutlined
 } from '@ant-design/icons';
 
 import LoginModal from "./LoginModal";
@@ -24,12 +28,33 @@ class Index extends React.Component {
   state = {
     collapsed: false,
     user_info: null,
-    content: <MdPage readOnly markdown="# 1" title="Title" />
+    content: <HomePage key={1} />,
   };
 
   _login_modal = React.createRef();
 
-  componentDidMount() {
+  menu_on_click = ({ key }) => {
+    switch (key) {
+      case "1":
+        this.setState({ content: <HomePage key={key} /> });
+        break;
+      case "2":
+        this.setState({ content: <BlogList key={key} /> });
+        break;
+      case "TagPage":
+        this.setState({ content: <TagPage key={key} /> });
+    }
+  }
+
+  user_menu = (
+    <Menu>
+      <Menu.Item>
+        <a>修改個人資料</a>
+      </Menu.Item>
+    </Menu>
+  );
+
+  async componentDidMount() {
     this._get_user_status();
   }
 
@@ -45,10 +70,14 @@ class Index extends React.Component {
     if (this.state.user_info) {
       return (
         <>
-          <UserOutlined />
-          <span style={{ margin: "0 10px" }}>
-            {this.state.user_info.nickname}
-          </span>
+          <Dropdown overlay={this.user_menu}>
+            <div>
+              <UserOutlined />
+              <span style={{ margin: "0 10px" }}>
+                {this.state.user_info.nickname}
+              </span>
+            </div>
+          </Dropdown>
           <Button style={{ margin: "0 10px 0 0" }} onClick={() => {
             this.setState({ user_info: null });
           }}>登出</Button>
@@ -83,16 +112,29 @@ class Index extends React.Component {
       <Layout>
         <Layout.Sider trigger={null} collapsible collapsed={this.state.collapsed}>
           <div className="logo" />
-          <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
-            <Menu.Item key="1" icon={<UserOutlined />}>
-              nav 1
+          <Menu
+            theme="dark"
+            mode="inline"
+            defaultSelectedKeys={['1']}
+            onClick={this.menu_on_click}
+          >
+            <Menu.Item key="1" icon={<HomeOutlined />}>
+              首頁
             </Menu.Item>
-            <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-              nav 2
+            <Menu.Item key="2" icon={<UnorderedListOutlined />}>
+              文章列表
             </Menu.Item>
-            <Menu.Item key="3" icon={<UploadOutlined />}>
-              nav 3
-            </Menu.Item>
+            <Menu.SubMenu title="管理員選項" icon={<MoreOutlined />}>
+              <Menu.Item key="TagPage" icon={<TagOutlined />}>
+                標籤管理
+              </Menu.Item>
+              <Menu.Item icon={<FolderOpenOutlined />}>
+                文件管理
+              </Menu.Item>
+              <Menu.Item icon={<UserOutlined />}>
+                使用者管理
+              </Menu.Item>
+            </Menu.SubMenu>
           </Menu>
         </Layout.Sider>
         <Layout className="site-layout">
@@ -109,7 +151,7 @@ class Index extends React.Component {
             </div>
           </Layout.Header>
           <Layout.Content
-            className="site-layout-background site-content"
+            className="site-layout-background"
             style={{
               margin: '24px 16px',
               padding: 24,
