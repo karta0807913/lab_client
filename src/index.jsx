@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import HomePage from "./HomePage";
 import BlogList from "./BlogList";
 import TagPage from "./TagPage";
+import UserManagePage from "./UserManagePage";
 
 import { Button, Layout, Menu, Dropdown } from "antd";
 import { UserInfoContext } from "./global";
@@ -44,6 +45,10 @@ class Index extends React.Component {
         break;
       case "TagPage":
         this.setState({ content: <TagPage key={key} /> });
+        break;
+      case "UserManage":
+        this.setState({ content: <UserManagePage key={key} /> });
+        break;
     }
   }
 
@@ -119,7 +124,7 @@ class Index extends React.Component {
           <Menu.Item icon={<FolderOpenOutlined />}>
             文件管理
               </Menu.Item>
-          <Menu.Item icon={<UserOutlined />}>
+          <Menu.Item key="UserManage" icon={<UserOutlined />}>
             使用者管理
               </Menu.Item>
         </Menu.SubMenu>

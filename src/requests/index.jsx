@@ -165,3 +165,34 @@ export function add_blog_tag(blog_id, tag_id) {
 export function delete_blog_tag(blog_id, tag_id) {
   return post("/blog/blog_tag", { blog_id, tag_id }, "DELETE");
 }
+
+export function get_user_list() {
+  return get("/admin/user");
+}
+
+export function update_user(id, {
+  nickname,
+  account,
+  password,
+  is_admin,
+  status
+}) {
+  return post("/admin/user", {
+    user_id: id,
+    nickname,
+    account,
+    password,
+    is_admin,
+    status
+  }, "PUT");
+}
+
+export function new_user(nickname, account, password, is_admin, status) {
+  return post("/admin/user", {
+    nickname,
+    account,
+    password,
+    is_admin,
+    status
+  });
+}
