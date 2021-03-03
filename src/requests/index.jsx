@@ -147,11 +147,15 @@ export function list_tag() {
 }
 
 export function new_tag(name) {
-  return post("/blog/tag", { name });
+  return post("/admin/tag", { name });
 }
 
 export function modify_tag(id, name) {
-  return post("/blog/tag", { id, name }, "PUT");
+  return post("/admin/tag", { id, name }, "PUT");
+}
+
+export function delete_tag(id) {
+  return post("/admin/tag", { id }, "DELETE");
 }
 
 export function search_blog_tag(tag_list) {
