@@ -5,9 +5,10 @@ import ModifyTag from "./ModifyTag";
 import { Table, Button } from "antd";
 import {
   PlusOutlined,
+  DeleteTwoTone
 } from '@ant-design/icons';
 
-import { list_tag } from "../requests";
+import { list_tag, delete_tag } from "../requests";
 
 export default class TagPage extends React.Component {
   state = {
@@ -41,13 +42,32 @@ export default class TagPage extends React.Component {
           </>
         );
       }
+    }, {
+      title: "刪除",
+      render: (_, record) => {
+        return (
+          <>
+            <DeleteTwoTone twoToneColor="#FF0000" onClick={async () => {
+              try {
+                await delete_tag(record.id);
+                this.reload();
+              } catch (error) {
+                console.log(error);
+              }
+            }} />
+          </>
+        );
+      }
     }
   ];
 
   new_tag_ref = React.createRef();
 
   reload = () => {
-    list_tag().then((data) => this.setState({ data }));
+    list_tag().then((data) => {
+      data.forEach(element => element.key = element.id);
+      this.setState({ data });
+    });
   }
 
   componentDidMount() {

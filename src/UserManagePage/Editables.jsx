@@ -23,6 +23,7 @@ export const EditableCell = ({
   dataIndex,
   record,
   handleSave,
+  required = true,
   ...restProps
 }) => {
   const [editing, setEditing] = useState(false);
@@ -62,7 +63,7 @@ export const EditableCell = ({
         name={dataIndex}
         rules={[
           {
-            required: true,
+            required,
             message: `${title} is required.`,
           },
         ]}

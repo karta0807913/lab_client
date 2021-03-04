@@ -7,7 +7,7 @@ if (process.env.REACT_APP_HOST_URL) {
   HOST_URL = "http://127.0.0.1/";
 }
 
-function concat_url(path) {
+export function concat_url(path) {
   if (path[0] === "/") {
     path = "." + path;
   }
@@ -15,13 +15,18 @@ function concat_url(path) {
   return url;
 }
 
-async function send(path, args) {
+async function raw_send(path, args) {
   args = args || {};
   let url = concat_url(path);
   let result = await fetch(url.toString(), {
     credentials: "include",
     ...args
   });
+  return result;
+}
+
+async function send(path, args) {
+  let result = await raw_send(path, args);
   if (result.status !== 200) {
     throw await result.json();
   }
@@ -77,10 +82,6 @@ export function user_info(id) {
   } else {
     return get("/member/me");
   }
-}
-
-export function file_list() {
-  return get("/file/list");
 }
 
 export function get_file(id) {
@@ -179,15 +180,17 @@ export function update_user(id, {
   account,
   password,
   is_admin,
-  status
-}) {
+  status,
+  note
+} = {}) {
   return post("/admin/user", {
     user_id: id,
     nickname,
     account,
     password,
     is_admin,
-    status
+    status,
+    note
   }, "PUT");
 }
 
@@ -198,5 +201,11 @@ export function new_user(nickname, account, password, is_admin, status) {
     password,
     is_admin,
     status
+  });
+}
+
+export function file_list(offset, limit = 20) {
+  return get("/admin/files", {
+    limit, offset
   });
 }

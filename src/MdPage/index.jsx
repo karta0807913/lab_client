@@ -1,8 +1,11 @@
 import React from "react";
 import { Alert, Button, Modal, Input, Tag } from "antd";
 
+import { PaperClipOutlined } from "@ant-design/icons";
+
 import MarkdownEditor from "../MarkdownEditor";
 import TagSelect from "../TagSelect";
+import FileUploadForm from "./FileUploadForm";
 
 import { UserInfoContext } from "../global";
 
@@ -18,6 +21,7 @@ export default class MdPage extends React.Component {
   _editor = React.createRef();
   _title_input = React.createRef();
   _select = React.createRef();
+  _upload_form = React.createRef();
 
   state = {
     readOnly: true,
@@ -27,7 +31,8 @@ export default class MdPage extends React.Component {
     id: this.props.id,
     modal_visible: false,
     tag_list: [],
-    owner: {}
+    owner: {},
+    uploadFileButtonLoading: false,
   };
 
   editMode = () => {
@@ -43,18 +48,29 @@ export default class MdPage extends React.Component {
     this.readMode();
   }
 
+  _create_blog = async () => {
+    this._editor.current.lock();
+    let markdown = this._editor.current.getMarkdown();
+    let title = this.state.title;
+    let tag_list = this._select.current.selected_tag_list();
+    try {
+      let result = await requests.new_blog(title, markdown, tag_list);
+      this.setState({ id: result.blog_id, tag_list: this._select.current.selected_tag_list_with_detail() });
+    } catch (error) {
+      throw error;
+    } finally {
+      this._editor.current.resume();
+    }
+  }
+
   submit = async () => {
     if (!this.state.id) {
       // create new blog
-      this._editor.current.lock();
-      let markdown = this._editor.current.getMarkdown();
-      let title = this.state.title;
-      let tag_list = this._select.current.selected_tag_list();
       try {
-        let result = await requests.new_blog(title, markdown, tag_list);
-        this.setState({ id: result.blog_id, readOnly: true });
+        await this._create_blog();
+        this.setState({ readOnly: true });
       } catch (error) {
-        this._editor.current.resume();
+        console.log(error);
       }
     } else {
       // update blog
@@ -104,6 +120,15 @@ export default class MdPage extends React.Component {
     this.setState({ title, modal_visible: false });
   }
 
+  _upload_file_button = async () => {
+    this.setState({ uploadFileButtonLoading: true });
+    if (!this.state.id) {
+      await this._create_blog();
+    }
+    this.setState({ uploadFileButtonLoading: false });
+    this._upload_form.current.show();
+  }
+
   set_context(title, markdown, readOnly = this.props.useDefault) {
     this.setState({
       title, markdown, readOnly, owner: {},
@@ -121,11 +146,13 @@ export default class MdPage extends React.Component {
 
     try {
       let result = await requests.get_blog(this.state.id);
+      console.log(result);
       this.setState({
         title: result.title,
         markdown: result.context,
         tag_list: result.tag_list.map(element => element.tag_info),
         owner: result.owner,
+        file_list: result.file_list,
       });
     } catch (error) {
       if (error.message === "record not found") {
@@ -174,7 +201,7 @@ export default class MdPage extends React.Component {
             <>
               <Button onClick={this.editMode}>
                 編輯
-          </Button>
+              </Button>
             </>
           );
         }
@@ -182,14 +209,25 @@ export default class MdPage extends React.Component {
         return (
           <>
             <Button
+              className="paper-clip"
+              loading={this.state.uploadFileButtonLoading}
+              onClick={this._upload_file_button}
+            >
+              <PaperClipOutlined />
+            </Button>
+            <Button
               onClick={this.cancel}
               type="primary"
               danger
-            >取消</Button>
+            >
+              取消
+            </Button>
             <Button
               type="primary"
               onClick={this.submit}
-            >儲存</Button>
+            >
+              儲存
+            </Button>
           </>
         );
       }
@@ -230,6 +268,7 @@ export default class MdPage extends React.Component {
         >
           <Input ref={this._title_input} defaultValue={this.state.title} />
         </Modal>
+        <FileUploadForm ref={this._upload_form} blog_id={this.state.id} />
         <div className="header">
           <Button
             className="title"
