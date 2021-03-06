@@ -58,7 +58,7 @@ class Index extends React.Component {
   user_menu = (
     <Menu>
       <Menu.Item>
-        <a>修改個人資料</a>
+        <a>修改密碼</a>
       </Menu.Item>
     </Menu>
   );

@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Button, Modal, Input, Tag } from "antd";
+import { Alert, Button, Modal, Input, Tag, Dropdown, Menu } from "antd";
 
 import { PaperClipOutlined } from "@ant-design/icons";
 
@@ -31,6 +31,7 @@ export default class MdPage extends React.Component {
     id: this.props.id,
     modal_visible: false,
     tag_list: [],
+    file_list: [],
     owner: {},
     uploadFileButtonLoading: false,
   };
@@ -93,6 +94,10 @@ export default class MdPage extends React.Component {
     }
   }
 
+  _set_file_list = (file_list) => {
+    this.setState({ file_list });
+  }
+
   _diff_tag_list(prevTag, nextTag) {
     let prevSet = new Set(prevTag);
     let new_tag = [];
@@ -146,7 +151,7 @@ export default class MdPage extends React.Component {
 
     try {
       let result = await requests.get_blog(this.state.id);
-      console.log(result);
+      this._upload_form.current.set_file_list(result.file_list);
       this.setState({
         title: result.title,
         markdown: result.context,
@@ -191,9 +196,38 @@ export default class MdPage extends React.Component {
     }
   }
 
+  _file_list_button = () => {
+    if (!this.state.file_list || this.state.file_list.length === 0) {
+      return;
+    }
+    if (this.state.readOnly) {
+      let menu = [];
+      for (let file of (this.state.file_list || [])) {
+        menu.push(
+          <Menu.Item key={file.file_id}>
+            <a
+              href={requests.concat_url("/file/download?id=" + file.file_id)}
+            >
+              {file.file_name}
+            </a>
+          </Menu.Item>
+        );
+      }
+      return (
+        <Dropdown overlay={
+          <Menu>
+            {menu}
+          </Menu>
+        }>
+          <PaperClipOutlined className="paper-clip" />
+        </Dropdown>
+      );
+    }
+  }
+
   _edit_button = (user_info) => {
     if (user_info &&
-      (user_info.is_admin || user_info.id == this.state.owner.user_id)) {
+      (user_info.is_admin || user_info.user_id == this.state.owner.user_id)) {
       if (this.state.readOnly) {
         if (this.state.error !== MdPage.FileNotFoundError &&
           this.state.error !== MdPage.UnknowError) {
@@ -268,7 +302,11 @@ export default class MdPage extends React.Component {
         >
           <Input ref={this._title_input} defaultValue={this.state.title} />
         </Modal>
-        <FileUploadForm ref={this._upload_form} blog_id={this.state.id} />
+        <FileUploadForm
+          ref={this._upload_form}
+          callback={this._set_file_list}
+          blog_id={this.state.id}
+        />
         <div className="header">
           <Button
             className="title"
@@ -277,6 +315,7 @@ export default class MdPage extends React.Component {
           >
             {this.state.title}
           </Button>
+          {this._file_list_button()}
           {this._show_tag()}
           <div>
             <UserInfoContext.Consumer>

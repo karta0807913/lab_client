@@ -63,7 +63,7 @@ export default class BlogCard extends React.Component {
         actions={[
           <UserInfoContext.Consumer>
             {(user_info) => {
-              if (user_info && user_info.is_admin) {
+              if (user_info && (user_info.is_admin || this.state.current_info.user_id === user_info.user_id)) {
                 return (
                   <DeleteTwoTone twoToneColor="#ff0000"
                     onClick={() => {

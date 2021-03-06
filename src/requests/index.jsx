@@ -209,3 +209,9 @@ export function file_list(offset, limit = 20) {
     limit, offset
   });
 }
+
+export function remove_file(id) {
+  return post("/file/file", {
+    id,
+  }, "DELETE");
+}
