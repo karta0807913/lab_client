@@ -11,6 +11,7 @@ import {
 
 import * as requests from "../requests";
 import style from "./style.module.scss";
+import { UserInfoContext } from "../global";
 
 export default class BlogList extends React.Component {
   _container = React.createRef();
@@ -166,13 +167,21 @@ export default class BlogList extends React.Component {
           </div>
           <div className={style.context}>
             {this._errors()}
-            <Card className={style.new_card} hoverable
-              onClick={() => {
-                this.setState({ current_edit: 0 });
-              }}>
-              <PlusOutlined />
-              <div className={style.text}>新增檔案</div>
-            </Card>
+            <UserInfoContext.Consumer>
+              {(user_info) => {
+                if (user_info) {
+                  return (
+                    <Card className={style.new_card} hoverable
+                      onClick={() => {
+                        this.setState({ current_edit: 0 });
+                      }}>
+                      <PlusOutlined />
+                      <div className={style.text}>新增檔案</div>;
+                    </Card>
+                  );
+                }
+              }}
+            </UserInfoContext.Consumer>
             {this.state.card_instance}
             <div className={style.page_control}>
               <div>
