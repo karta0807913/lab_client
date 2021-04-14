@@ -3,7 +3,6 @@ import React from "react";
 import { Modal, Upload } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { concat_url, remove_file } from "../requests";
-import Item from "antd/lib/list/Item";
 
 export default class FileUploadForm extends React.Component {
 
@@ -83,6 +82,9 @@ export default class FileUploadForm extends React.Component {
           <p className="ant-upload-text">拖拉或是點擊上傳</p>
           <p className="ant-upload-hint">
             請不要亂上傳檔案，因為是實驗室內部使用的所以沒有做限制
+          </p>
+          <p className="ant-upload-hint">
+            單檔案上限為10Gb，超過將會被拒絕
           </p>
         </Upload.Dragger>
       </Modal >

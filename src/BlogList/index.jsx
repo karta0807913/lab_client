@@ -176,7 +176,7 @@ export default class BlogList extends React.Component {
                         this.setState({ current_edit: 0 });
                       }}>
                       <PlusOutlined />
-                      <div className={style.text}>新增檔案</div>;
+                      <div className={style.text}>新增檔案</div>
                     </Card>
                   );
                 }
@@ -202,12 +202,14 @@ export default class BlogList extends React.Component {
     } else {
       return (
         <div className={style.editor}>
-          <Button onClick={() => {
-            this.reload = true;
-            this.setState({ current_edit: null });
-          }} >
-            <ArrowLeftOutlined />
-          </Button>
+          <div className={style.header}>
+            <Button onClick={() => {
+              this.reload = true;
+              this.setState({ current_edit: null });
+            }} >
+              <ArrowLeftOutlined />
+            </Button>
+          </div>
           <MdPage id={this.state.current_edit} />
         </div>
       );

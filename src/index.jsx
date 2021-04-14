@@ -5,6 +5,7 @@ import BlogList from "./BlogList";
 import TagPage from "./TagPage";
 import FileManagePage from "./FileManagePage";
 import UserManagePage from "./UserManagePage";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 import { Button, Layout, Menu, Dropdown } from "antd";
 import { UserInfoContext } from "./global";
@@ -58,7 +59,11 @@ class Index extends React.Component {
   user_menu = (
     <Menu>
       <Menu.Item>
-        <a>修改密碼</a>
+        <a
+          onClick={() => {
+            this._change_password_modal.current.show();
+          }}
+        >修改密碼</a>
       </Menu.Item>
     </Menu>
   );
@@ -75,10 +80,12 @@ class Index extends React.Component {
     }
   }
 
+  _change_password_modal = React.createRef();
   _user_status() {
     if (this.state.user_info) {
       return (
         <>
+          <ChangePasswordModal ref={this._change_password_modal} />
           <Dropdown overlay={this.user_menu}>
             <div>
               <UserOutlined />
@@ -171,8 +178,8 @@ class Index extends React.Component {
           <Layout.Content
             className="site-layout-background"
             style={{
-              margin: '24px 16px',
-              padding: 24,
+              margin: '24px 0 0 16px',
+              padding: '12px 12px 0px 12px',
               minHeight: 280,
             }}
           >

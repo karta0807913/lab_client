@@ -196,11 +196,11 @@ export default class MdPage extends React.Component {
     }
   }
 
-  _file_list_button = () => {
+  _file_list_button = (user_info) => {
     if (!this.state.file_list || this.state.file_list.length === 0) {
       return;
     }
-    if (this.state.readOnly) {
+    if (this.state.readOnly && user_info) {
       let menu = [];
       for (let file of (this.state.file_list || [])) {
         menu.push(
@@ -315,7 +315,9 @@ export default class MdPage extends React.Component {
           >
             {this.state.title}
           </Button>
-          {this._file_list_button()}
+          <UserInfoContext.Consumer>
+            {this._file_list_button}
+          </UserInfoContext.Consumer>
           {this._show_tag()}
           <div>
             <UserInfoContext.Consumer>
