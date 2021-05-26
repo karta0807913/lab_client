@@ -46,7 +46,7 @@ export default class UserManagePage extends React.Component {
   _modal = React.createRef();
 
   handleOnChange = (record, checked) => {
-    return requests.update_user(record.mem_id, { is_admin: checked });
+    return requests.update_user(record.user_id, { is_admin: checked });
   }
 
   handleSave = async (row) => {
