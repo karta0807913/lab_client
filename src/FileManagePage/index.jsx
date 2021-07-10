@@ -1,7 +1,8 @@
 import React from "react";
 
-import { Table, Pagination } from "antd";
+import { Table } from "antd";
 import { file_list } from "../requests";
+import { CloudDownloadOutlined } from "@ant-design/icons";
 
 export default class FileManage extends React.Component {
 
@@ -15,7 +16,14 @@ export default class FileManage extends React.Component {
   load = async (page = 1) => {
     let offset = (page - 1) * this.limit;
     let { total, result } = await file_list(offset, this.limit);
-    result.forEach(element => element.key = element.file_id);
+    result.forEach((element, index) => {
+      element.key = element.file_id;
+      element = {
+        ...element,
+        ...element.user_data,
+      };
+      result[index] = element;
+    });
     this.setState({ total, fileList: result });
   }
 
@@ -33,6 +41,18 @@ export default class FileManage extends React.Component {
           }, {
             title: "使用者ID",
             dataIndex: "user_id"
+          }, {
+            title: "使用者名稱",
+            dataIndex: "nickname"
+          }, {
+            title: "檔案下載",
+            render: (value) => {
+              return (
+                <a href={`/file/download?id=${value.file_id}`}>
+                  <CloudDownloadOutlined />
+                </a>
+              );
+            }
           }]}
           dataSource={this.state.fileList}
           pagination={{ total: this.state.total, onChange: this.load }}

@@ -6,6 +6,7 @@ import TagPage from "./TagPage";
 import FileManagePage from "./FileManagePage";
 import UserManagePage from "./UserManagePage";
 import ChangePasswordModal from "./ChangePasswordModal";
+import CalendarPage from "./CalendarPage";
 
 import { Button, Layout, Menu, Dropdown } from "antd";
 import { UserInfoContext } from "./global";
@@ -18,7 +19,8 @@ import {
   HomeOutlined,
   FolderOpenOutlined,
   TagOutlined,
-  UnorderedListOutlined
+  UnorderedListOutlined,
+  CalendarOutlined
 } from '@ant-design/icons';
 
 import LoginModal from "./LoginModal";
@@ -53,6 +55,8 @@ class Index extends React.Component {
         break;
       case "FileManagePage":
         this.setState({ content: <FileManagePage key={key} /> });
+      case "Calendar":
+        this.setState({ content: <CalendarPage key={key} /> });
     }
   }
 
@@ -97,6 +101,7 @@ class Index extends React.Component {
           <Button style={{ margin: "0 10px 0 0" }} onClick={() => {
             requests.logout();
             this.setState({ user_info: null });
+            window.location.reload();
           }}>登出</Button>
         </>
       );
@@ -158,6 +163,9 @@ class Index extends React.Component {
             </Menu.Item>
             <Menu.Item key="2" icon={<UnorderedListOutlined />}>
               文章列表
+            </Menu.Item>
+            <Menu.Item key="Calendar" icon={<CalendarOutlined />}>
+              科技部日曆
             </Menu.Item>
             {this._admin_menu()}
           </Menu>
