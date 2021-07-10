@@ -1,11 +1,12 @@
 import React from "react";
 import { Modal, Form, Input, Button } from "antd";
+import { user_change_password } from "./requests";
 
 export default class ChangePasswordModal extends React.Component {
 
   state = {
     visible: false,
-    loading: true,
+    loading: false,
   }
 
   _form = React.createRef();
@@ -19,7 +20,17 @@ export default class ChangePasswordModal extends React.Component {
     this._form.current.resetFields();
   }
 
-  submit = () => {
+  submit = async ({ new_password, old_password }) => {
+    this.setState({ loading: true });
+    try {
+      await user_change_password(old_password, new_password);
+      this.hide();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this._form.current.resetFields();
+      this.setState({ loading: false });
+    }
   }
 
   render() {
@@ -34,9 +45,12 @@ export default class ChangePasswordModal extends React.Component {
             <Button onClick={this.hide}>
               取消
             </Button>
-            <Button onClick={() => {
-              this._form.current.submit();
-            }}>
+            <Button
+              type="primary"
+              loading={this.state.loading}
+              onClick={() => {
+                this._form.current.submit();
+              }}>
               確定
             </Button>
           </>
@@ -44,7 +58,7 @@ export default class ChangePasswordModal extends React.Component {
       >
         <Form
           ref={this._form}
-          onFinish={this.submit()}
+          onFinish={this.submit}
         >
           <Form.Item
             label="舊密碼"

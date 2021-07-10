@@ -175,6 +175,10 @@ export function get_user_list() {
   return get("/admin/user");
 }
 
+export function user_change_password(old_password, new_password) {
+  return post("/member/change_password", { old_password, new_password }, "PUT");
+}
+
 export function update_user(id, {
   nickname,
   account,
